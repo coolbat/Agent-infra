@@ -1,153 +1,237 @@
-import requests, os, feedparser
-from jinja2 import Template
+import os
+import re
+import requests
+import feedparser
 from datetime import datetime
 
-# ---------- 配置 ----------
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-MAX_RESULTS = 30
+# =========================
+# 配置区
+# =========================
 README_FILE = "README.md"
-MD_FILE = "agent_resources.md"
+RESOURCES_FILE = "agent_resources.md"
 CHANGELOG_FILE = "CHANGELOG.md"
 
-HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
-
-# GitHub 搜索关键字
-SEARCH_QUERIES = {
-    "Runtime": "AI Agent runtime in:description",
-    "Memory": "AI Agent memory database in:description",
-    "Orchestration": "AI Agent orchestration workflow in:description",
-    "Tools": "AI Agent plugin tools in:description",
-    "Security": "AI Agent security in:description",
-    "Observability": "AI Agent observability monitoring in:description"
-}
-
-# 多标签映射，可以自定义扩展
-TAG_MAPPING = {
-    "Runtime": ["Runtime"],
-    "Memory": ["Memory"],
-    "Orchestration": ["Orchestration"],
-    "Tools": ["Plugin", "Tools"],
-    "Security": ["Security"],
-    "Observability": ["Observability", "Monitoring"]
-}
-
-# RSS 订阅示例
-RSS_FEEDS = [
-    "https://www.agentblog.com/rss"  # 替换为真实 RSS
+# GitHub 搜索关键词（可扩展）
+SEARCH_QUERIES = [
+    "AI Agent framework",
+    "multi-agent system",
+    "autonomous agent",
+    "LLM orchestration",
 ]
 
-# ---------- GitHub 搜索 ----------
-def search_github(query):
-    url = f"https://api.github.com/search/repositories?q={query}&per_page={MAX_RESULTS}"
-    resp = requests.get(url, headers=HEADERS)
+# RSS 源（可以按需扩展）
+RSS_FEEDS = [
+    "https://www.reddit.com/r/LocalLLaMA/.rss",
+    "https://news.ycombinator.com/rss",
+    "https://huggingface.co/blog/feed.xml",
+]
+
+# 标签映射，用于分类
+TAG_MAPPING = {
+    "framework": ["framework", "sdk", "library"],
+    "memory": ["memory", "vector", "retrieval"],
+    "orchestration": ["orchestration", "workflow", "multi-agent"],
+    "plugins": ["plugin", "tools", "integration"],
+    "runtime": ["runtime", "execution", "engine"],
+    "rss": ["rss", "blog", "news", "release"],  # 新增 RSS 分类
+}
+
+# GitHub API
+GITHUB_API = "https://api.github.com/search/repositories"
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")  # 需要 GitHub Token
+
+
+# =========================
+# 工具函数
+# =========================
+def github_search(query, per_page=10):
+    """调用 GitHub API 搜索项目"""
+    headers = {"Accept": "application/vnd.github+json"}
+    if GITHUB_TOKEN:
+        headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
+
+    params = {"q": query, "sort": "stars", "order": "desc", "per_page": per_page}
+    resp = requests.get(GITHUB_API, headers=headers, params=params)
+
+    if resp.status_code != 200:
+        print(f"GitHub API 调用失败: {resp.status_code}, {resp.text}")
+        return []
+
+    return resp.json().get("items", [])
+
+
+def parse_rss_feed(url, limit=5):
+    """解析 RSS 源，返回最新的若干条"""
+    try:
+        feed = feedparser.parse(url)
+    except Exception as e:
+        print(f"RSS 解析失败 {url}: {e}")
+        return []
+
     items = []
-    for i in resp.json().get("items", []):
-        if i["stargazers_count"] < 5:
-            continue
-        items.append({
-            "name": i["name"],
-            "url": i["html_url"],
-            "description": i["description"] or "",
-            "tags": [],
-            "category": "",
-            "stars": i["stargazers_count"],
-            "last_updated": i["updated_at"]
-        })
+    for entry in feed.entries[:limit]:
+        items.append(
+            {
+                "name": entry.get("title", "Untitled"),
+                "html_url": entry.get("link", ""),
+                "description": entry.get("summary", "")[:200],
+                "stargazers_count": 0,  # RSS 没有 stars 字段
+                "source": "rss",
+            }
+        )
     return items
 
-def fetch_all_github_resources():
-    all_resources, seen_urls = [], set()
-    for category, query in SEARCH_QUERIES.items():
-        results = search_github(query)
-        for r in results:
-            if r["url"] in seen_urls:
-                continue
-            r["category"] = category
-            r["tags"] = TAG_MAPPING.get(category, [])
-            seen_urls.add(r["url"])
-            all_resources.append(r)
-    return all_resources
 
-# ---------- RSS 资源 ----------
-def fetch_rss_resources():
-    rss_resources = []
-    for feed_url in RSS_FEEDS:
-        feed = feedparser.parse(feed_url)
-        for entry in feed.entries:
-            rss_resources.append({
-                "name": entry.title,
-                "url": entry.link,
-                "description": getattr(entry, "summary", ""),
-                "category": "Blog/News",
-                "tags": ["Blog", "News"],
-                "stars": None,
-                "last_updated": getattr(entry, "published", "")
-            })
-    return rss_resources
+def classify_repo(repo):
+    """根据关键词分类"""
+    name = repo["name"].lower()
+    desc = (repo["description"] or "").lower()
+    tags = []
+    for tag, keywords in TAG_MAPPING.items():
+        if any(k in name or k in desc for k in keywords):
+            tags.append(tag)
+    if not tags:
+        tags.append("misc")
+    return tags
 
-# ---------- Markdown 生成 ----------
-def generate_markdown(resources, filename):
-    template_str = """
-{% set tag_groups = {} %}
-{% for r in resources %}
-    {% for tag in r.tags %}
-        {% if tag not in tag_groups %}{% set _ = tag_groups.update({tag: []}) %}{% endif %}
-        {% set _ = tag_groups[tag].append(r) %}
-    {% endfor %}
-{% endfor %}
 
-{% for tag, items in tag_groups.items() %}
-### {{ tag }}
+def load_static_links(filename=README_FILE):
+    """读取 README 静态区的所有链接，避免重复"""
+    with open(filename, "r", encoding="utf-8") as f:
+        content = f.read()
 
-{% for r in items|sort(attribute='stars', reverse=True) %}
-- [{{ r.name }}]({{ r.url }}) – {{ r.description }}
-{% endfor %}
+    # 找到自动更新区
+    dynamic_section_pattern = re.compile(
+        r"<!-- AGENT-INFRA-START -->(.*?)<!-- AGENT-INFRA-END -->",
+        re.DOTALL,
+    )
+    dynamic_section = dynamic_section_pattern.findall(content)
+    if dynamic_section:
+        dynamic_content = dynamic_section[0]
+    else:
+        dynamic_content = ""
 
-{% endfor %}
-"""
-    template = Template(template_str)
-    md_content = template.render(resources=resources)
-    with open(filename, "w", encoding="utf-8") as f: f.write(md_content)
-    return md_content
+    # 静态区 = 全部内容 - 动态区
+    static_content = content.replace(dynamic_content, "")
 
-# ---------- README 更新 ----------
-def update_readme(md_content, filename=README_FILE):
-    start_marker = "<!-- AGENT-INFRA-START -->"
-    end_marker = "<!-- AGENT-INFRA-END -->"
-    with open(filename, "r", encoding="utf-8") as f: content = f.read()
-    before, after = content.split(start_marker)[0], content.split(end_marker)[1]
-    new_content = before + start_marker + "\n" + md_content + "\n" + end_marker + after
-    with open(filename, "w", encoding="utf-8") as f: f.write(new_content)
+    # 提取所有 markdown 链接 (https://xxx)
+    urls = set(re.findall(r"\(https?://[^\)]+?\)", static_content))
+    return urls
 
-# ---------- CHANGELOG ----------
-def update_changelog(resources, filename=CHANGELOG_FILE):
+
+def generate_markdown(resources_by_tag):
+    """生成资源列表 Markdown"""
+    md = []
+    for tag, repos in resources_by_tag.items():
+        if not repos:
+            continue
+        md.append(f"### {tag.capitalize()}\n")
+        for r in repos:
+            stars = f" ⭐{r['stargazers_count']}" if r["stargazers_count"] else ""
+            md.append(f"- [{r['name']}]({r['html_url']}){stars}\n  - {r['description'] or 'No description'}\n")
+        md.append("\n")
+    return "".join(md)
+
+
+def update_readme(resources_markdown):
+    """更新 README.md 自动更新区"""
+    with open(README_FILE, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    new_content = re.sub(
+        r"(<!-- AGENT-INFRA-START -->)(.*?)(<!-- AGENT-INFRA-END -->)",
+        f"\\1\n{resources_markdown}\n\\3",
+        content,
+        flags=re.DOTALL,
+    )
+
+    with open(README_FILE, "w", encoding="utf-8") as f:
+        f.write(new_content)
+
+
+def update_changelog(new_items):
+    """更新 CHANGELOG.md"""
     date_str = datetime.utcnow().strftime("%Y-%m-%d")
-    new_entries = "\n".join([f"- [{r['name']}]({r['url']}) – {r['description']}" for r in resources])
-    entry = f"## {date_str}\n\n{new_entries}\n\n"
-    content = ""
-    if os.path.exists(filename):
-        with open(filename, "r", encoding="utf-8") as f: content = f.read()
-    with open(filename, "w", encoding="utf-8") as f: f.write(entry + content)
+    lines = [f"## {date_str}\n"]
+    for r in new_items:
+        stars = f" ⭐{r['stargazers_count']}" if r["stargazers_count"] else ""
+        lines.append(f"- Added [{r['name']}]({r['html_url']}){stars}")
+    lines.append("\n")
 
-# ---------- 主程序 ----------
+    if os.path.exists(CHANGELOG_FILE):
+        with open(CHANGELOG_FILE, "r", encoding="utf-8") as f:
+            old = f.read()
+    else:
+        old = ""
+
+    with open(CHANGELOG_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n" + old)
+
+
+# =========================
+# 主逻辑
+# =========================
+def main():
+    all_repos = []
+
+    # GitHub 搜索
+    for q in SEARCH_QUERIES:
+        repos = github_search(q)
+        for r in repos:
+            r["source"] = "github"
+        all_repos.extend(repos)
+
+    # RSS 订阅
+    for url in RSS_FEEDS:
+        items = parse_rss_feed(url)
+        all_repos.extend(items)
+
+    print(f"共获取 {len(all_repos)} 个项目（未去重）")
+
+    # 去重
+    seen_urls = set()
+    unique_items = []
+    for r in all_repos:
+        if r["html_url"] not in seen_urls:
+            unique_items.append(r)
+            seen_urls.add(r["html_url"])
+
+    print(f"去重后剩余 {len(unique_items)} 个项目")
+
+    # 静态去重：过滤掉 README.md 静态区已有的链接
+    static_links = load_static_links()
+    filtered_items = [r for r in unique_items if f"({r['html_url']})" not in static_links]
+
+    print(f"过滤静态区后剩余 {len(filtered_items)} 个项目")
+
+    # 分类
+    resources_by_tag = {k: [] for k in TAG_MAPPING.keys()}
+    resources_by_tag["misc"] = []
+    for r in filtered_items:
+        tags = classify_repo(r)
+        for t in tags:
+            resources_by_tag[t].append(r)
+
+    # 生成 Markdown
+    resources_md = generate_markdown(resources_by_tag)
+
+    # 更新 README
+    update_readme(resources_md)
+
+    # 更新 agent_resources.md（全量，不去重）
+    full_resources_by_tag = {k: [] for k in TAG_MAPPING.keys()}
+    full_resources_by_tag["misc"] = []
+    for r in unique_items:
+        tags = classify_repo(r)
+        for t in tags:
+            full_resources_by_tag[t].append(r)
+    full_md = generate_markdown(full_resources_by_tag)
+    with open(RESOURCES_FILE, "w", encoding="utf-8") as f:
+        f.write("# Agent Infra Resources\n\n" + full_md)
+
+    # 更新 CHANGELOG
+    update_changelog(filtered_items)
+
+
 if __name__ == "__main__":
-    print("🔍 Fetching GitHub resources...")
-    github_resources = fetch_all_github_resources()
-    print(f"⚡ Fetched {len(github_resources)} GitHub items")
-
-    print("🔍 Fetching RSS resources...")
-    rss_resources = fetch_rss_resources()
-    print(f"⚡ Fetched {len(rss_resources)} RSS items")
-
-    all_resources = github_resources + rss_resources
-
-    print("📝 Generating Markdown...")
-    md_content = generate_markdown(all_resources, MD_FILE)
-
-    print("📄 Updating README...")
-    update_readme(md_content)
-
-    print("📜 Updating CHANGELOG...")
-    update_changelog(all_resources)
-
-    print(f"✅ Done! Updated {MD_FILE}, README.md, and CHANGELOG.md")
+    main()
