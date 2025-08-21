@@ -104,6 +104,31 @@ This repository collects awesome projects and resources to explore the **Agent I
 
 ---
 
+Below are resources automatically updated by our script.  
+You can add your own curated items **outside this block**, they will not be overwritten.
+
+<!-- AGENT-INFRA-START -->
+<!-- Automatically updated content will appear here -->
+<!-- AGENT-INFRA-END -->
+
+---
+
+## ⚡ Usage
+
+- Explore projects under each category
+- Check [agent_resources.md](./agent_resources.md) for the **full list**
+- Follow the [CHANGELOG.md](./CHANGELOG.md) for new additions
+
+---
+
+## 🔄 Updates
+
+- `README.md` → curated + auto-updated section  
+- `agent_resources.md` → full categorized resources (auto-generated)  
+- `CHANGELOG.md` → update history with timestamps
+
+---
+
 ## 🤝 Contributing
 Contributions are welcome! 🎉  
 - Fork the repo  
@@ -111,3 +136,13 @@ Contributions are welcome! 🎉
 - Submit a PR  
 
 Please follow the existing format:  
+
+---
+
+## 📜 License
+
+[MIT](./LICENSE)
+
+---
+
+<p align="center">💡 Curated with ❤️ for the AI Agent community.</p>
