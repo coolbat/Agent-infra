@@ -1,0 +1,35 @@
+name: Auto Update Agent Infra
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-agent-resources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests jinja2 feedparser
+
+      - name: Run update script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/update_agent_resources_tags.py
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Auto-update Agent Infra resources [skip ci]"
+          branch: "auto-update-agent-infra"
+          title: "Auto-update Agent Infra resources"
+          body: "This PR updates the Agent Infra resources list automatically."
