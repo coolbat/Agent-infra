@@ -245,30 +245,11 @@ You can add your own curated items **outside this block**, they will not be over
   - Fully Local Manus AI. No APIs, No $200 monthly bills. Enjoy an autonomous agent that thinks, browses the web, and code for the sole cost of electricity. 🔔 Official updates only via twitter @Martin993886460 (Beware of fake account)
 - [12-factor-agents](https://github.com/humanlayer/12-factor-agents) ⭐12811
   - What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers?
-- [Announcing LocalLlama discord server & bot!](https://www.reddit.com/r/LocalLLaMA/comments/1mpk2va/announcing_localllama_discord_server_bot/)
-  - <table> <tr><td> <a href="https://www.reddit.com/r/LocalLLaMA/comments/1mpk2va/announcing_localllama_discord_server_bot/"> <img alt="Announcing LocalLlama discord server &amp; bot!" src="https://b.thu
-- [r/LocalLlama is looking for moderators](https://www.reddit.com/r/LocalLLaMA/comments/1mjf5ol/rlocalllama_is_looking_for_moderators/)
-  - &#32; submitted by &#32; <a href="https://www.reddit.com/user/HOLUPREDICTIONS"> /u/HOLUPREDICTIONS </a> <br /> <span><a href="https://www.reddit.com/r/LocalLLaMA/application/">[link]</a></span> &#32; 
-- [deepseek-ai/DeepSeek-V3.1 · Hugging Face](https://www.reddit.com/r/LocalLLaMA/comments/1mw3c7s/deepseekaideepseekv31_hugging_face/)
-  - <table> <tr><td> <a href="https://www.reddit.com/r/LocalLLaMA/comments/1mw3c7s/deepseekaideepseekv31_hugging_face/"> <img alt="deepseek-ai/DeepSeek-V3.1 · Hugging Face" src="https://external-preview.r
-- [My LLM trained from scratch on only 1800s London texts brings up a real protest from 1834](https://www.reddit.com/r/LocalLLaMA/comments/1mvnmjo/my_llm_trained_from_scratch_on_only_1800s_london/)
-  - <table> <tr><td> <a href="https://www.reddit.com/r/LocalLLaMA/comments/1mvnmjo/my_llm_trained_from_scratch_on_only_1800s_london/"> <img alt="My LLM trained from scratch on only 1800s London texts brin
-- [DeepSeek-V3.1 implements Anthropic API compatibility](https://www.reddit.com/r/LocalLLaMA/comments/1mw3nat/deepseekv31_implements_anthropic_api_compatibility/)
-  - <table> <tr><td> <a href="https://www.reddit.com/r/LocalLLaMA/comments/1mw3nat/deepseekv31_implements_anthropic_api_compatibility/"> <img alt="DeepSeek-V3.1 implements Anthropic API compatibility" src
-- [Generate Images with Claude and Hugging Face](https://huggingface.co/blog/claude-and-mcp)
-  - No description
-- [From Zero to GPU: A Guide to Building and Scaling Production-Ready CUDA Kernels](https://huggingface.co/blog/kernel-builder)
-  - No description
-- [TextQuests: How Good are LLMs at Text-Based Video Games?](https://huggingface.co/blog/textquests)
-  - No description
-- [Introducing AI Sheets: a tool to work with datasets using open AI models!](https://huggingface.co/blog/aisheets)
-  - No description
 
 
 <!-- AGENT-INFRA-END -->
 
 ---
-
 ## ⚡ Usage
 
 - Explore projects under each category
