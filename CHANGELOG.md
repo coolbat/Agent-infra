@@ -1,1 +1,54 @@
+## 2025-08-21
+
+- Added [lobe-chat](https://github.com/lobehub/lobe-chat) ⭐64690
+- Added [MetaGPT](https://github.com/FoundationAgents/MetaGPT) ⭐57997
+- Added [crewAI](https://github.com/crewAIInc/crewAI) ⭐35946
+- Added [agno](https://github.com/agno-agi/agno) ⭐32042
+- Added [haystack](https://github.com/deepset-ai/haystack) ⭐21958
+- Added [letta](https://github.com/letta-ai/letta) ⭐17983
+- Added [DB-GPT](https://github.com/eosphoros-ai/DB-GPT) ⭐17183
+- Added [SuperAGI](https://github.com/TransformerOptimus/SuperAGI) ⭐16647
+- Added [eliza](https://github.com/elizaOS/eliza) ⭐16634
+- Added [RagaAI-Catalyst](https://github.com/raga-ai-hub/RagaAI-Catalyst) ⭐16051
+- Added [DevOpsGPT](https://github.com/kuafuai/DevOpsGPT) ⭐5960
+- Added [PraisonAI](https://github.com/MervinPraison/PraisonAI) ⭐5297
+- Added [DeepResearchAgent](https://github.com/SkyworkAI/DeepResearchAgent) ⭐1400
+- Added [KaibanJS](https://github.com/kaiban-ai/KaibanJS) ⭐1232
+- Added [Agent-MCP](https://github.com/rinadelph/Agent-MCP) ⭐830
+- Added [ai-doc-gen](https://github.com/divar-ir/ai-doc-gen) ⭐593
+- Added [Sage](https://github.com/ZHangZHengEric/Sage) ⭐574
+- Added [swe-agent](https://github.com/langtalks/swe-agent) ⭐524
+- Added [cline](https://github.com/cline/cline) ⭐49519
+- Added [AgentGPT](https://github.com/reworkd/AgentGPT) ⭐34785
+- Added [khoj](https://github.com/khoj-ai/khoj) ⭐30761
+- Added [gpt-researcher](https://github.com/assafelovic/gpt-researcher) ⭐23111
+- Added [awesome-ai-agents](https://github.com/e2b-dev/awesome-ai-agents) ⭐21377
+- Added [agenticSeek](https://github.com/Fosowl/agenticSeek) ⭐20906
+- Added [agent-zero](https://github.com/agent0ai/agent-zero) ⭐11556
+- Added [dify](https://github.com/langgenius/dify) ⭐111636
+- Added [FastGPT](https://github.com/labring/FastGPT) ⭐25560
+- Added [12-factor-agents](https://github.com/humanlayer/12-factor-agents) ⭐12811
+- Added [txtai](https://github.com/neuml/txtai) ⭐11443
+- Added [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) ⭐11398
+- Added [bisheng](https://github.com/dataelement/bisheng) ⭐9486
+- Added [flyte](https://github.com/flyteorg/flyte) ⭐6426
+- Added [poml](https://github.com/microsoft/poml) ⭐3640
+- Added [higgsfield](https://github.com/higgsfield-ai/higgsfield) ⭐3459
+- Added [Announcing LocalLlama discord server & bot!](https://www.reddit.com/r/LocalLLaMA/comments/1mpk2va/announcing_localllama_discord_server_bot/)
+- Added [r/LocalLlama is looking for moderators](https://www.reddit.com/r/LocalLLaMA/comments/1mjf5ol/rlocalllama_is_looking_for_moderators/)
+- Added [deepseek-ai/DeepSeek-V3.1 · Hugging Face](https://www.reddit.com/r/LocalLLaMA/comments/1mw3c7s/deepseekaideepseekv31_hugging_face/)
+- Added [My LLM trained from scratch on only 1800s London texts brings up a real protest from 1834](https://www.reddit.com/r/LocalLLaMA/comments/1mvnmjo/my_llm_trained_from_scratch_on_only_1800s_london/)
+- Added [DeepSeek-V3.1 implements Anthropic API compatibility](https://www.reddit.com/r/LocalLLaMA/comments/1mw3nat/deepseekv31_implements_anthropic_api_compatibility/)
+- Added [D4d4](https://www.nmichaels.org/musings/d4d4/d4d4/)
+- Added [Show HN: I replaced vector databases with Git for AI memory (PoC)](https://github.com/Growth-Kinetics/DiffMem)
+- Added [Code review can be better](https://tigerbeetle.com/blog/2025-08-04-code-review-can-be-better/)
+- Added [Universal Tool Calling Protocol (UTCP)](https://github.com/universal-tool-calling-protocol/python-utcp)
+- Added [Show HN: I was curious about spherical helix, ended up making this visualization](https://visualrambling.space/moving-objects-in-3d/)
+- Added [Generate Images with Claude and Hugging Face](https://huggingface.co/blog/claude-and-mcp)
+- Added [From Zero to GPU: A Guide to Building and Scaling Production-Ready CUDA Kernels](https://huggingface.co/blog/kernel-builder)
+- Added [MCP for Research: How to Connect AI to Research Tools](https://huggingface.co/blog/mcp-for-research)
+- Added [TextQuests: How Good are LLMs at Text-Based Video Games?](https://huggingface.co/blog/textquests)
+- Added [Introducing AI Sheets: a tool to work with datasets using open AI models!](https://huggingface.co/blog/aisheets)
+
+
 
